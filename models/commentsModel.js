@@ -1,28 +1,34 @@
-const mongoose = require('mongoose');
+const dbQueries = require('./queries/comments.js');
 
-const commentSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // assuming you have a User model
-        required: true
-    },
-    content: {
-        type: String,
-        required: true,
-        trim: true,
-        maxlength: 500  // You can adjust the max length as needed.
-    },
-    timestamp: {
-        type: Date,
-        default: Date.now
-    },
-    // Uncomment the below if you want to associate the comment with a specific post or content.
-    // postId: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Post' // replace 'Post' with the appropriate model name if different
-    // }
-});
+// Function to get all comments
+const getAllComments = async () => {
+    return dbQueries.getAllComments();
+};
 
-const Comment = mongoose.model('Comment', commentSchema);
+// Function to get a comment by ID
+const getCommentById = async (id) => {
+    return dbQueries.getCommentById(id);
+};
 
-module.exports = Comment;
+// Function to create a new comment
+const createComment = async (comment) => {
+    return dbQueries.createComment(comment);
+};
+
+// Function to update a comment by ID
+const updateComment = async (id, comment) => {
+    return dbQueries.updateComment(id, comment);
+};
+
+// Function to delete a comment by ID
+const deleteComment = async (id) => {
+    return dbQueries.deleteComment(id);
+};
+
+module.exports = {
+    getAllComments,
+    getCommentById,
+    createComment,
+    updateComment,
+    deleteComment,
+};
