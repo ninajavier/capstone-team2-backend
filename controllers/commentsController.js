@@ -1,70 +1,76 @@
-const Comment = require('../models/Comment'); // Assuming you have a model named Comment
+// commentsController.js
 
-// Get all comments
-exports.getAllComments = async (req, res) => {
+const db = require("../db/dbConfig.js");
+
+// Function to get all comments for a specific route
+const getCommentsByRouteId = async (req, res) => {
     try {
-        const comments = await Comment.find();
+        const routeId = req.params.id;
+        const comments = await db.any("SELECT * FROM comments WHERE route_id=$1", routeId);
+
+        if (!comments.length) {
+            return res.status(404).send('No comments found for this route');
+        }
+
         res.json(comments);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).send(error);
     }
 };
 
-// Get a single comment by ID
-exports.getCommentById = async (req, res) => {
+// Function to post a new comment for a specific route
+const addComment = async (req, res) => {
     try {
-        const comment = await Comment.findById(req.params.id);
-        if (!comment) {
-            return res.status(404).json({ error: "Comment not found" });
-        }
-        res.json(comment);
+        const routeId = req.params.id;
+        const { userId, text } = req.body; // Assuming the comment has a user and text. Adjust fields accordingly.
+
+        const newComment = await db.one(
+            "INSERT INTO comments (route_id, user_id, text) VALUES($1, $2, $3) RETURNING *",
+            [routeId, userId, text]
+        );
+
+        res.status(201).json(newComment);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).send(error);
     }
 };
 
-// Create a new comment
-exports.createComment = async (req, res) => {
+// Function to update a comment by ID
+const updateComment = async (req, res) => {
     try {
-        const comment = new Comment(req.body);
-        await comment.save();
-        res.status(201).json(comment);
+        const commentId = req.params.id;
+        const { text } = req.body;
+
+        const updatedComment = await db.one(
+            "UPDATE comments SET text=$1 WHERE id=$2 RETURNING *",
+            [text, commentId]
+        );
+
+        res.json(updatedComment);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).send(error);
     }
 };
 
-// Update a comment by its ID
-exports.updateComment = async (req, res) => {
+// Function to delete a comment by ID
+const deleteComment = async (req, res) => {
     try {
-        const { id } = req.params;
-        let comment = await Comment.findById(id);
+        const commentId = req.params.id;
 
-        if (!comment) {
-            return res.status(404).json({ error: "Comment not found" });
-        }
+        const deletedComment = await db.one(
+            "DELETE FROM comments WHERE id=$1 RETURNING *",
+            commentId
+        );
 
-        Object.assign(comment, req.body);
-        await comment.save();
-
-        res.json(comment);
+        res.json({ message: 'Comment deleted successfully', deletedComment });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).send(error);
     }
 };
 
-// Delete a comment by its ID
-exports.deleteComment = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const comment = await Comment.findByIdAndDelete(id);
-
-        if (!comment) {
-            return res.status(404).json({ error: "Comment not found" });
-        }
-
-        res.json({ message: "Comment deleted successfully" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+module.exports = {
+    getCommentsByRouteId,
+    addComment,
+    updateComment,
+    deleteComment
 };

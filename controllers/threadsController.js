@@ -1,9 +1,11 @@
-const Thread = require('../models/Thread');
+// threadsController.js
+
+const db = require("../db/dbConfig.js");
 
 // Get all threads
-exports.getAllThreads = async (req, res) => {
+const getAllThreads = async (req, res) => {
     try {
-        const threads = await Thread.find();
+        const threads = await db.any("SELECT * FROM threads");
         res.json(threads);
     } catch (error) {
         res.status(500).send(error);
@@ -11,10 +13,15 @@ exports.getAllThreads = async (req, res) => {
 };
 
 // Get a thread by ID
-exports.getThreadById = async (req, res) => {
+const getThreadById = async (req, res) => {
     try {
-        const thread = await Thread.findById(req.params.id);
-        if (!thread) return res.status(404).send('Thread not found');
+        const threadId = req.params.id;
+        const thread = await db.one("SELECT * FROM threads WHERE id=$1", threadId);
+
+        if (!thread) {
+            return res.status(404).send('Thread not found');
+        }
+
         res.json(thread);
     } catch (error) {
         res.status(500).send(error);
@@ -22,34 +29,59 @@ exports.getThreadById = async (req, res) => {
 };
 
 // Create a new thread
-exports.createThread = async (req, res) => {
+const createThread = async (req, res) => {
     try {
-        const newThread = new Thread(req.body);
-        const savedThread = await newThread.save();
-        res.status(201).json(savedThread);
+        // Adjust for your column names and match them with req.body's content.
+        const newThread = await db.one(
+            "INSERT INTO threads (/* your column names */) VALUES(/* your $ placeholders */) RETURNING *",
+            [ /* values from req.body */ ]
+        );
+
+        res.status(201).json(newThread);
     } catch (error) {
         res.status(500).send(error);
     }
 };
 
 // Update a thread by ID
-exports.updateThread = async (req, res) => {
+const updateThread = async (req, res) => {
     try {
-        const thread = await Thread.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!thread) return res.status(404).send('Thread not found');
-        res.json(thread);
+        const threadId = req.params.id;
+        const updatedThread = await db.one(
+            "UPDATE threads SET /* your column=value, column2=value2, etc. */ WHERE id=$1 RETURNING *",
+            [ /* updated values from req.body, threadId */ ]
+        );
+
+        if (!updatedThread) {
+            return res.status(404).send('Thread not found');
+        }
+
+        res.json(updatedThread);
     } catch (error) {
         res.status(500).send(error);
     }
 };
 
 // Delete a thread by ID
-exports.deleteThread = async (req, res) => {
+const deleteThread = async (req, res) => {
     try {
-        const thread = await Thread.findByIdAndRemove(req.params.id);
-        if (!thread) return res.status(404).send('Thread not found');
-        res.json({ message: 'Thread deleted successfully' });
+        const threadId = req.params.id;
+        const deletedThread = await db.one("DELETE FROM threads WHERE id=$1 RETURNING *", threadId);
+
+        if (!deletedThread) {
+            return res.status(404).send('Thread not found');
+        }
+
+        res.json({ message: 'Thread deleted successfully', deletedThread });
     } catch (error) {
         res.status(500).send(error);
     }
+};
+
+module.exports = {
+    getAllThreads,
+    getThreadById,
+    createThread,
+    updateThread,
+    deleteThread
 };

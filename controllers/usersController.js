@@ -1,9 +1,11 @@
-const User = require('us')
+// usersController.js
+
+const db = require("../db/dbConfig.js");
 
 // Get all users
-exports.getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find();
+        const users = await db.any("SELECT * FROM users");
         res.json(users);
     } catch (error) {
         res.status(500).send(error);
@@ -11,10 +13,15 @@ exports.getAllUsers = async (req, res) => {
 };
 
 // Get a user by ID
-exports.getUserById = async (req, res) => {
+const getUserById = async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
-        if (!user) return res.status(404).send('User not found');
+        const userId = req.params.id;
+        const user = await db.one("SELECT * FROM users WHERE id=$1", userId);
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
         res.json(user);
     } catch (error) {
         res.status(500).send(error);
@@ -22,34 +29,59 @@ exports.getUserById = async (req, res) => {
 };
 
 // Create a new user
-exports.createUser = async (req, res) => {
+const createUser = async (req, res) => {
     try {
-        const newUser = new User(req.body);
-        const savedUser = await newUser.save();
-        res.status(201).json(savedUser);
+        // Adjust for your column names and match them with req.body's content.
+        const newUser = await db.one(
+            "INSERT INTO users (/* your column names */) VALUES(/* your $ placeholders */) RETURNING *",
+            [ /* values from req.body */ ]
+        );
+
+        res.status(201).json(newUser);
     } catch (error) {
         res.status(500).send(error);
     }
 };
 
 // Update a user by ID
-exports.updateUser = async (req, res) => {
+const updateUser = async (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!user) return res.status(404).send('User not found');
-        res.json(user);
+        const userId = req.params.id;
+        const updatedUser = await db.one(
+            "UPDATE users SET /* your column=value, column2=value2, etc. */ WHERE id=$1 RETURNING *",
+            [ /* updated values from req.body, userId */ ]
+        );
+
+        if (!updatedUser) {
+            return res.status(404).send('User not found');
+        }
+
+        res.json(updatedUser);
     } catch (error) {
         res.status(500).send(error);
     }
 };
 
 // Delete a user by ID
-exports.deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
     try {
-        const user = await User.findByIdAndRemove(req.params.id);
-        if (!user) return res.status(404).send('User not found');
-        res.json({ message: 'User deleted successfully' });
+        const userId = req.params.id;
+        const deletedUser = await db.one("DELETE FROM users WHERE id=$1 RETURNING *", userId);
+
+        if (!deletedUser) {
+            return res.status(404).send('User not found');
+        }
+
+        res.json({ message: 'User deleted successfully', deletedUser });
     } catch (error) {
         res.status(500).send(error);
     }
+};
+
+module.exports = {
+    getAllUsers,
+    getUserById,
+    createUser,
+    updateUser,
+    deleteUser
 };
