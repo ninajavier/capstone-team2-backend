@@ -124,10 +124,6 @@ app.get("*", (req, res) => {
   res.status(404).send("Page not found");
 });
 
-app.get("*", (req, res) => {
-  res.status(404).send("Page not found");
-});
-
 app.listen(PORT, () => {
   console.log(`listening on PORT: ${PORT}`);
 });
