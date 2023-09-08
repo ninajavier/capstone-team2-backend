@@ -1,6 +1,7 @@
 const axios = require("axios");
 const app = require("./app");
 require("dotenv").config();
+const cors = require("cors");
 const PORT = process.env.PORT || 8888;
 
 const protobuf = require("protobufjs");
@@ -13,7 +14,7 @@ protobuf.load("Proto/gtfs-realtime.proto", function (err, root) {
   MTAProtobufRoot = root;
   console.log("Protobuf definitions loaded successfully!");
 });
-
+app.use(cors());
 app.get("/service-alerts", async (req, res) => {
   if (!MTAProtobufRoot) {
     return res
