@@ -1,87 +1,121 @@
-// usersController.js
+const db = require("../../db/dbConfig.js");
 
-const db = require("../db/dbConfig.js");
-
-// Get all users
-const getAllUsers = async (req, res) => {
-    try {
-        const users = await db.any("SELECT * FROM users");
-        res.json(users);
-    } catch (error) {
-        res.status(500).send(error);
-    }
+// INDEX - Get all users
+const getAllUsers = async () => {
+  try {
+    const allUsers = await db.any("SELECT * FROM users");
+    return { data: allUsers, status: 200 };
+  } catch (error) {
+    console.error(error);
+    return { error: "Server error", status: 500 };
+  }
 };
 
-// Get a user by ID
-const getUserById = async (req, res) => {
-    try {
-        const userId = req.params.id;
-        const user = await db.one("SELECT * FROM users WHERE id=$1", userId);
-
-        if (!user) {
-            return res.status(404).send('User not found');
-        }
-
-        res.json(user);
-    } catch (error) {
-        res.status(500).send(error);
-    }
+// SHOW - Get single user by ID
+const getUserById = async (id) => {
+  try {
+    const user = await db.one("SELECT * FROM users WHERE id=$1", id);
+    return { data: user, status: 200 };
+  } catch (error) {
+    console.error(error);
+    return { error: "User not found", status: 404 };
+  }
 };
 
-// Create a new user
-const createUser = async (req, res) => {
-    try {
-        // Adjust for your column names and match them with req.body's content.
-        const newUser = await db.one(
-            "INSERT INTO users (/* your column names */) VALUES(/* your $ placeholders */) RETURNING *",
-            [ /* values from req.body */ ]
-        );
-
-        res.status(201).json(newUser);
-    } catch (error) {
-        res.status(500).send(error);
-    }
+// SHOW - Get single user by Firebase UID
+const getUserByFirebaseUID = async (uid) => {
+  try {
+    const user = await db.one("SELECT * FROM users WHERE firebase_uid=$1", [
+      uid,
+    ]);
+    return { data: user, status: 200 };
+  } catch (error) {
+    console.error(error);
+    return { error: "User not found", status: 404 };
+  }
 };
 
-// Update a user by ID
-const updateUser = async (req, res) => {
-    try {
-        const userId = req.params.id;
-        const updatedUser = await db.one(
-            "UPDATE users SET /* your column=value, column2=value2, etc. */ WHERE id=$1 RETURNING *",
-            [ /* updated values from req.body, userId */ ]
-        );
-
-        if (!updatedUser) {
-            return res.status(404).send('User not found');
-        }
-
-        res.json(updatedUser);
-    } catch (error) {
-        res.status(500).send(error);
-    }
+// CREATE - Add new user
+const createUser = async (user) => {
+  try {
+    const newUser = await db.one(
+      "INSERT INTO users (firebase_uid, username, email, profile_photo, bio) VALUES($1, $2, $3, $4, $5) RETURNING *",
+      [
+        user.firebase_uid,
+        user.username,
+        user.email,
+        user.profile_photo,
+        user.bio,
+      ]
+    );
+    return { data: newUser, status: 200 };
+  } catch (error) {
+    console.error(error);
+    return { error: "Server error", status: 500 };
+  }
 };
 
-// Delete a user by ID
-const deleteUser = async (req, res) => {
-    try {
-        const userId = req.params.id;
-        const deletedUser = await db.one("DELETE FROM users WHERE id=$1 RETURNING *", userId);
+// UPDATE - Update a user by ID
+const updateUser = async (id, user) => {
+  try {
+    const updatedUser = await db.one(
+      "UPDATE users SET username=$1, email=$2, profile_photo=$3, bio=$4 WHERE id=$5 RETURNING *",
+      [user.username, user.email, user.profile_photo, user.bio, id]
+    );
+    return { data: updatedUser, status: 200 };
+  } catch (error) {
+    console.error(error);
+    return { error: "Could not update user", status: 400 };
+  }
+};
 
-        if (!deletedUser) {
-            return res.status(404).send('User not found');
-        }
-
-        res.json({ message: 'User deleted successfully', deletedUser });
-    } catch (error) {
-        res.status(500).send(error);
+// DELETE - Remove a user by ID
+const deleteUser = async (id) => {
+  try {
+    const deletedUser = await db.one(
+      "DELETE FROM users WHERE id = $1 RETURNING *",
+      [id]
+    );
+    return { data: deletedUser, status: 200 };
+  } catch (error) {
+    console.error(error);
+    if (error.message === "No data returned from the query.") {
+      return { error: "User not found", status: 404 };
     }
+    return { error: "Server error", status: 500 };
+  }
+};
+
+// ACTIVITY - Get a user's activity by their ID
+const getUserActivity = async (id) => {
+  try {
+    const comments = await db.any("SELECT * FROM comments WHERE user_id = $1", [
+      id,
+    ]);
+    const threads = await db.any("SELECT * FROM threads WHERE user_id = $1", [
+      id,
+    ]);
+    const likes = await db.any("SELECT * FROM likes WHERE user_id = $1", [id]);
+    return {
+      data: {
+        comments,
+        threads,
+        likes,
+      },
+      status: 200,
+    };
+  } catch (error) {
+    console.error(error);
+    return { error: "Could not fetch user activity", status: 500 };
+  }
 };
 
 module.exports = {
-    getAllUsers,
-    getUserById,
-    createUser,
-    updateUser,
-    deleteUser
+  getAllUsers,
+  getUserById,
+  getUserByFirebaseUID,
+  createUser,
+  updateUser,
+  deleteUser,
+  getUserActivity,
 };

@@ -1,87 +1,98 @@
-// threadsController.js
-
-const db = require("../db/dbConfig.js");
+const db = require("../../db/dbConfig.js");
 
 // Get all threads
 const getAllThreads = async (req, res) => {
-    try {
-        const threads = await db.any("SELECT * FROM threads");
-        res.json(threads);
-    } catch (error) {
-        res.status(500).send(error);
-    }
+  try {
+    const threads = await db.any("SELECT * FROM threads");
+    res.json({ data: threads, status: 200 });
+  } catch (error) {
+    res.status(500).json({ error, status: 500 });
+  }
 };
 
 // Get a thread by ID
 const getThreadById = async (req, res) => {
-    try {
-        const threadId = req.params.id;
-        const thread = await db.one("SELECT * FROM threads WHERE id=$1", threadId);
-
-        if (!thread) {
-            return res.status(404).send('Thread not found');
-        }
-
-        res.json(thread);
-    } catch (error) {
-        res.status(500).send(error);
+  try {
+    const threadId = req.params.id;
+    const thread = await db.one("SELECT * FROM threads WHERE id=$1", threadId);
+    res.json({ data: thread, status: 200 });
+  } catch (error) {
+    if (error.message === "No data returned from the query.") {
+      res.status(404).json({ error: "Thread not found", status: 404 });
+    } else {
+      res.status(500).json({ error, status: 500 });
     }
+  }
 };
 
 // Create a new thread
 const createThread = async (req, res) => {
-    try {
-        // Adjust for your column names and match them with req.body's content.
-        const newThread = await db.one(
-            "INSERT INTO threads (/* your column names */) VALUES(/* your $ placeholders */) RETURNING *",
-            [ /* values from req.body */ ]
-        );
+  try {
+    const { title, body } = req.body;
+    const firebaseUid = req.user.uid; // Getting UID from the Firebase auth token
 
-        res.status(201).json(newThread);
-    } catch (error) {
-        res.status(500).send(error);
-    }
+    const user = await db.one("SELECT id FROM users WHERE firebase_uid=$1", [
+      firebaseUid,
+    ]);
+
+    const newThread = await db.one(
+      "INSERT INTO threads (title, body, user_id) VALUES($1, $2, $3) RETURNING *",
+      [title, body, user.id]
+    );
+
+    res.status(201).json({ data: newThread, status: 201 });
+  } catch (error) {
+    res.status(500).json({ error, status: 500 });
+  }
 };
 
 // Update a thread by ID
 const updateThread = async (req, res) => {
-    try {
-        const threadId = req.params.id;
-        const updatedThread = await db.one(
-            "UPDATE threads SET /* your column=value, column2=value2, etc. */ WHERE id=$1 RETURNING *",
-            [ /* updated values from req.body, threadId */ ]
-        );
+  try {
+    const threadId = req.params.id;
+    const { title, body } = req.body;
 
-        if (!updatedThread) {
-            return res.status(404).send('Thread not found');
-        }
+    const updatedThread = await db.one(
+      "UPDATE threads SET title=$1, body=$2 WHERE id=$3 RETURNING *",
+      [title, body, threadId]
+    );
 
-        res.json(updatedThread);
-    } catch (error) {
-        res.status(500).send(error);
+    res.json({ data: updatedThread, status: 200 });
+  } catch (error) {
+    if (error.message === "No data returned from the query.") {
+      res.status(404).json({ error: "Thread not found", status: 404 });
+    } else {
+      res.status(500).json({ error, status: 500 });
     }
+  }
 };
 
 // Delete a thread by ID
 const deleteThread = async (req, res) => {
-    try {
-        const threadId = req.params.id;
-        const deletedThread = await db.one("DELETE FROM threads WHERE id=$1 RETURNING *", threadId);
-
-        if (!deletedThread) {
-            return res.status(404).send('Thread not found');
-        }
-
-        res.json({ message: 'Thread deleted successfully', deletedThread });
-    } catch (error) {
-        res.status(500).send(error);
+  try {
+    const threadId = req.params.id;
+    const deletedThread = await db.one(
+      "DELETE FROM threads WHERE id=$1 RETURNING *",
+      threadId
+    );
+    res.json({
+      message: "Thread deleted successfully",
+      data: deletedThread,
+      status: 200,
+    });
+  } catch (error) {
+    if (error.message === "No data returned from the query.") {
+      res.status(404).json({ error: "Thread not found", status: 404 });
+    } else {
+      res.status(500).json({ error, status: 500 });
     }
+  }
 };
 
 module.exports = {
-    getAllThreads,
-    getThreadById,
-    createThread,
-    updateThread,
-    deleteThread
+  getAllThreads,
+  getThreadById,
+  createThread,
+  updateThread,
+  deleteThread,
 };
