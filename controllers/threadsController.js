@@ -1,4 +1,4 @@
-const db = require("../../db/dbConfig.js");
+const db = require("../config/dbConfig");
 
 // Get all threads
 const getAllThreads = async (req, res) => {

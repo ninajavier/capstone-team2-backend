@@ -1,6 +1,16 @@
 // commentsController.js
 
-const db = require("../../db/dbConfig.js");
+const db = require("../config/dbConfig");
+
+const getAllComments = async (req, res) => {
+  try {
+    const comments = await db.any("SELECT * FROM comments");
+
+    res.json({ data: comments, status: 200 });
+  } catch (error) {
+    res.status(500).json({ error, status: 500 });
+  }
+};
 
 // Function to get all comments for a specific thread
 const getCommentsByThreadId = async (req, res) => {
@@ -83,6 +93,7 @@ const deleteComment = async (req, res) => {
 };
 
 module.exports = {
+  getAllComments,
   getCommentsByThreadId,
   addComment,
   updateComment,

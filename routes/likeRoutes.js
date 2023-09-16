@@ -3,7 +3,7 @@ const router = express.Router();
 const likesController = require("../controllers/likesController");
 
 // Middleware (replace `authMiddleware` and `validationMiddleware` with your actual middleware)
-const authMiddleware = require("../middleware/authMiddleware");
+const authMiddleware = require('../middleware/authMiddleware');
 const validationMiddleware = require("../middleware/validationMiddleware");
 
 // Routes

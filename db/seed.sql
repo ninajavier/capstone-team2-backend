@@ -12,11 +12,12 @@ VALUES
   ((SELECT id FROM users WHERE username = 'christina'), 'This is a groundbreaking comment by Christina showcasing her insightful perspectives.', NOW(), NOW());
 
 -- Insert a thread by Christina in response to her own comment
-INSERT INTO threads (comment_id, user_id, title, content, created_at, updated_at)
+INSERT INTO threads (user_id, title)
 VALUES
-  ((SELECT id FROM comments WHERE content LIKE 'This is a groundbreaking comment%'), (SELECT id FROM users WHERE username = 'christina'), 'Insightful Thread Title', 'Christina further elaborates on her perspectives in this thread.', NOW(), NOW());
+  ((SELECT id FROM users WHERE username = 'christina'), 'Insightful Thread Title');
 
 -- Christina upvotes her own comment
-INSERT INTO likes (user_id, comment_id, like_type, created_at, updated_at)
+INSERT INTO likes (user_id, comment_id, like_type)
 VALUES
-  ((SELECT id FROM users WHERE username = 'christina'), (SELECT id FROM comments WHERE content LIKE 'This is a groundbreaking comment%'), 'upvote', NOW(), NOW());
+  ((SELECT id FROM users WHERE username = 'christina'), (SELECT id FROM comments WHERE content LIKE 'This is a groundbreaking comment%'), 'upvote');
+

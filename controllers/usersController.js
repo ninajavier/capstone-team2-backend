@@ -1,4 +1,4 @@
-const db = require("../../db/dbConfig.js");
+const db = require("../config/dbConfig");
 
 // INDEX - Get all users
 const getAllUsers = async () => {
