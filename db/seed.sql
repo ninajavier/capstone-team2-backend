@@ -1,5 +1,4 @@
--- Connect to the database
-\c prograde_dev;
+
 
 -- Insert a user with detailed bio and profile photo
 INSERT INTO users (firebase_uid, username, email, profile_photo, bio, created_at, updated_at) 

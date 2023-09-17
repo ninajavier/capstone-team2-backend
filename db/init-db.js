@@ -1,4 +1,4 @@
-const db = require("./dbConfig"); // Import the database configuration
+const db = require("../config/dbConfig"); // Import the database configuration
 const fs = require("fs");
 const path = require("path");
 
