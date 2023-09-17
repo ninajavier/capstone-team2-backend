@@ -18,7 +18,7 @@ app.use(express.json()); // This middleware is used to parse JSON bodies
 app.use(requestLoggerMiddleware); // Logging all incoming requests
 
 // Use your routes with Firebase Auth Middleware
-// app.use("/api", apiRoutes);
+app.use("/api", apiRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/comments", firebaseAuthMiddleware, commentRoutes);
 app.use("/api/threads", firebaseAuthMiddleware, threadRoutes);
