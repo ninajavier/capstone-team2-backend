@@ -4,7 +4,7 @@
 -- Insert a user with detailed bio and profile photo
 INSERT INTO users (firebase_uid, username, email, profile_photo, bio, created_at, updated_at) 
 VALUES
-  ('uniqueFirebaseUID123', 'christina', 'christinacephus@pursuit.org', 'path/to/profile/photo.jpg', 'This is The Cephus bio where she shares details about herself and her passion for community building.', NOW(), NOW());
+  ('qtynteG7XPcgrNLKPYAKBNWfHsw2', 'christina', 'christinacephus@pursuit.org', 'path/to/profile/photo.jpg', 'This is The Cephus bio where she shares details about herself and her passion for community building.', NOW(), NOW());
 
 -- Insert a comment by Christina
 INSERT INTO comments (user_id, content, created_at, updated_at)

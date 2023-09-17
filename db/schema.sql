@@ -24,6 +24,7 @@ CREATE TABLE threads (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
     title VARCHAR(255) NOT NULL,
+    body TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -53,3 +54,28 @@ CREATE INDEX idx_users_firebase_uid ON users(firebase_uid);
 CREATE INDEX idx_comments_thread_id ON comments(thread_id);
 CREATE INDEX idx_likes_thread_id ON likes(thread_id);
 CREATE INDEX idx_likes_comment_id ON likes(comment_id);
+
+-- Creating function to update the updated_at column
+CREATE OR REPLACE FUNCTION update_updated_at_column() 
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at := CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creating triggers to update the updated_at column automatically
+CREATE TRIGGER update_user_updated_at
+BEFORE UPDATE ON users
+FOR EACH ROW
+EXECUTE PROCEDURE update_updated_at_column();
+
+CREATE TRIGGER update_thread_updated_at
+BEFORE UPDATE ON threads
+FOR EACH ROW
+EXECUTE PROCEDURE update_updated_at_column();
+
+CREATE TRIGGER update_comment_updated_at
+BEFORE UPDATE ON comments
+FOR EACH ROW
+EXECUTE PROCEDURE update_updated_at_column();

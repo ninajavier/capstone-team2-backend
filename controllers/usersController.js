@@ -1,6 +1,43 @@
 const db = require("../config/dbConfig");
 
-// INDEX - Get all users
+console.log("usersController file loaded");
+
+const getUserComments = async (req, res) => {
+  try {
+    console.log("getUserComments called"); // Debug log here
+    const { uid } = req.params;
+    const userData = await db.any('SELECT * FROM comments WHERE user_id = (SELECT id FROM users WHERE firebase_uid = $1)', [uid]);
+    res.status(200).json({ status: 200, data: userData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 500, error: 'Server error' });
+  }
+};
+
+const getUserThreads = async (req, res) => {
+  try {
+    console.log("getUserThreads called"); // Debug log here
+    const { uid } = req.params;
+    const userData = await db.any('SELECT * FROM threads WHERE user_id = (SELECT id FROM users WHERE firebase_uid = $1)', [uid]);
+    res.status(200).json({ status: 200, data: userData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 500, error: 'Server error' });
+  }
+};
+
+const getUserLikes = async (req, res) => {
+  try {
+    console.log("getUserLikes called"); // Debug log here
+    const { uid } = req.params;
+    const userData = await db.any('SELECT * FROM likes WHERE user_id = (SELECT id FROM users WHERE firebase_uid = $1)', [uid]);
+    res.status(200).json({ status: 200, data: userData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 500, error: 'Server error' });
+  }
+};
+
 const getAllUsers = async () => {
   try {
     const allUsers = await db.any("SELECT * FROM users");
@@ -11,7 +48,6 @@ const getAllUsers = async () => {
   }
 };
 
-// SHOW - Get single user by ID
 const getUserById = async (id) => {
   try {
     const user = await db.one("SELECT * FROM users WHERE id=$1", id);
@@ -22,20 +58,17 @@ const getUserById = async (id) => {
   }
 };
 
-// SHOW - Get single user by Firebase UID
-const getUserByFirebaseUID = async (uid) => {
+const getUserByFirebaseUID = async (req, res) => {
   try {
-    const user = await db.one("SELECT * FROM users WHERE firebase_uid=$1", [
-      uid,
-    ]);
-    return { data: user, status: 200 };
+    const { uid } = req.params;
+    const userData = await db.one('SELECT * FROM users WHERE firebase_uid = $1', [uid]);
+    res.json({ status: 200, data: userData });
   } catch (error) {
     console.error(error);
-    return { error: "User not found", status: 404 };
+    res.status(404).json({ status: 404, error: 'User not found' });
   }
 };
 
-// CREATE - Add new user
 const createUser = async (user) => {
   try {
     const newUser = await db.one(
@@ -55,7 +88,6 @@ const createUser = async (user) => {
   }
 };
 
-// UPDATE - Update a user by ID
 const updateUser = async (id, user) => {
   try {
     const updatedUser = await db.one(
@@ -69,7 +101,6 @@ const updateUser = async (id, user) => {
   }
 };
 
-// DELETE - Remove a user by ID
 const deleteUser = async (id) => {
   try {
     const deletedUser = await db.one(
@@ -86,15 +117,10 @@ const deleteUser = async (id) => {
   }
 };
 
-// ACTIVITY - Get a user's activity by their ID
 const getUserActivity = async (id) => {
   try {
-    const comments = await db.any("SELECT * FROM comments WHERE user_id = $1", [
-      id,
-    ]);
-    const threads = await db.any("SELECT * FROM threads WHERE user_id = $1", [
-      id,
-    ]);
+    const comments = await db.any("SELECT * FROM comments WHERE user_id = $1", [id]);
+    const threads = await db.any("SELECT * FROM threads WHERE user_id = $1", [id]);
     const likes = await db.any("SELECT * FROM likes WHERE user_id = $1", [id]);
     return {
       data: {
@@ -118,4 +144,7 @@ module.exports = {
   updateUser,
   deleteUser,
   getUserActivity,
+  getUserComments,
+  getUserThreads,
+  getUserLikes,
 };

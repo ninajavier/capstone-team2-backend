@@ -26,14 +26,30 @@ const getThreadById = async (req, res) => {
 };
 
 // Create a new thread
+// Create a new thread
 const createThread = async (req, res) => {
   try {
     const { title, body } = req.body;
-    const firebaseUid = req.user.uid; // Getting UID from the Firebase auth token
 
-    const user = await db.one("SELECT id FROM users WHERE firebase_uid=$1", [
-      firebaseUid,
-    ]);
+    if (!title || !body) {
+      return res.status(400).json({ error: "Title and body are required", status: 400 });
+    }
+
+    const firebaseUid = req.user?.uid; // Getting UID from the Firebase auth token
+
+    if (!firebaseUid) {
+      return res.status(400).json({ error: "User is not authenticated", status: 400 });
+    }
+
+    let user;
+    try {
+      user = await db.one("SELECT id FROM users WHERE firebase_uid=$1", [firebaseUid]);
+    } catch (error) {
+      if (error.message === "No data returned from the query.") {
+        return res.status(404).json({ error: "User not found", status: 404 });
+      }
+      throw error; // re-throw the error if it's not the expected "not found" error
+    }
 
     const newThread = await db.one(
       "INSERT INTO threads (title, body, user_id) VALUES($1, $2, $3) RETURNING *",
@@ -45,6 +61,7 @@ const createThread = async (req, res) => {
     res.status(500).json({ error, status: 500 });
   }
 };
+
 
 // Update a thread by ID
 const updateThread = async (req, res) => {

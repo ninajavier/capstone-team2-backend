@@ -24,14 +24,15 @@ const getThreadById = async (id) => {
 const createThread = async (thread, firebase_uid) => {
   try {
     const newThread = await db.one(
-      "INSERT INTO threads (comment_id, firebase_uid, content) VALUES($1, $2, $3) RETURNING *", 
-      [thread.comment_id, firebase_uid, thread.content]
+      "INSERT INTO threads (user_id, title, body) VALUES($1, $2, $3) RETURNING *", 
+      [thread.user_id, thread.title, thread.body]
     );
     return newThread;
   } catch (error) {
     return error;
   }
 };
+
 
 // UPDATE - Update a thread by ID
 const updateThread = async (id, thread, firebase_uid) => {
