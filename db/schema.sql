@@ -1,61 +1,81 @@
--- Create a table for users
+-- Dropping database if it exists for a fresh start
+DROP DATABASE IF EXISTS prograde_dev;
+
+-- Creating the Prograde database
+CREATE DATABASE prograde_dev;
+
+-- Switching to the new database for further operations
+\c prograde_dev;
+
+-- Creating the users table
 CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  uid TEXT NOT NULL,
-  username TEXT NOT NULL,
-  email TEXT NOT NULL,
-  profile_photo TEXT,
-  likes TEXT[],
-  timestamp TIMESTAMP
+    id SERIAL PRIMARY KEY,
+    firebase_uid VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    bio TEXT,
+    profile_photo VARCHAR(255) DEFAULT 'https://source.unsplash.com/random/400x400',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create a table for threads
+-- Creating the threads table
 CREATE TABLE threads (
-  id SERIAL PRIMARY KEY,
-  thread_id TEXT NOT NULL,
-  user_ref INTEGER REFERENCES users (id),
-  train TEXT,
-  station TEXT,
-  text TEXT NOT NULL,
-  upvotes INT,
-  downvotes INT,
-  users_upvoted TEXT[],
-  users_downvoted TEXT[],
-  photo BYTEA, -- Added column for photo data
-  timestamp TIMESTAMP
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    title VARCHAR(255) NOT NULL,
+    body TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
--- Create a table for service updates
-CREATE TABLE service_updates (
-  id SERIAL PRIMARY KEY,
-  update_id TEXT NOT NULL,
-  timestamp TIMESTAMP
-);
-
--- Create a table for routes
-CREATE TABLE routes (
-  id SERIAL PRIMARY KEY,
-  route_id TEXT NOT NULL,
-  user_ref INTEGER REFERENCES users (id),
-  start_location TEXT,
-  route TEXT,
-  destination TEXT,
-  status TEXT,
-  route_details JSON[],
-  timestamp TIMESTAMP
-);
-
--- Create a table for comments
+-- Creating the comments table
 CREATE TABLE comments (
-  id SERIAL PRIMARY KEY,
-  comment_id TEXT NOT NULL,
-  user_ref INTEGER REFERENCES users (id),
-  thread_ref INTEGER REFERENCES threads (id),
-  text TEXT NOT NULL,
-  photo BYTEA, -- Added column for photo data
-  upvotes INT,
-  downvotes INT,
-  users_upvoted TEXT[],
-  users_downvoted TEXT[],
-  timestamp TIMESTAMP
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    thread_id INT REFERENCES threads(id),
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Creating the likes table
+CREATE TABLE likes (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    comment_id INT REFERENCES comments(id),
+    thread_id INT REFERENCES threads(id),
+    like_type VARCHAR(50) NOT NULL, -- Values: 'upvote', 'downvote'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Creating indexes for optimization
+CREATE INDEX idx_users_firebase_uid ON users(firebase_uid);
+CREATE INDEX idx_comments_thread_id ON comments(thread_id);
+CREATE INDEX idx_likes_thread_id ON likes(thread_id);
+CREATE INDEX idx_likes_comment_id ON likes(comment_id);
+
+-- Creating function to update the updated_at column
+CREATE OR REPLACE FUNCTION update_updated_at_column() 
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at := CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Creating triggers to update the updated_at column automatically
+CREATE TRIGGER update_user_updated_at
+BEFORE UPDATE ON users
+FOR EACH ROW
+EXECUTE PROCEDURE update_updated_at_column();
+
+CREATE TRIGGER update_thread_updated_at
+BEFORE UPDATE ON threads
+FOR EACH ROW
+EXECUTE PROCEDURE update_updated_at_column();
+
+CREATE TRIGGER update_comment_updated_at
+BEFORE UPDATE ON comments
+FOR EACH ROW
+EXECUTE PROCEDURE update_updated_at_column();

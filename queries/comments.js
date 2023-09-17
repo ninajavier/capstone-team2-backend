@@ -20,6 +20,17 @@ const getCommentById = async (id) => {
   }
 };
 
+// Get all comments by a specific user ID
+const getCommentsByUserId = async (userId) => {
+  try {
+    const userComments = await db.any("SELECT * FROM comments WHERE user_id = $1", [userId]);
+    return userComments;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
 // CREATE - Add a new comment
 const createComment = async (comment) => {
   try {
@@ -65,4 +76,5 @@ module.exports = {
   createComment,
   updateComment,
   deleteComment,
+  getCommentsByUserId, 
 };
