@@ -1,3 +1,8 @@
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS threads;
+DROP TABLE IF EXISTS service_updates;
+DROP TABLE IF EXISTS routes;
+DROP TABLE IF EXISTS comments;
 -- Create a table for users
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
