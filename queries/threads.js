@@ -21,11 +21,11 @@ const getThreadById = async (id) => {
 };
 
 // CREATE - Add new thread
-const createThread = async (thread) => {
+const createThread = async (thread, firebase_uid) => {
   try {
     const newThread = await db.one(
-      "INSERT INTO threads (title, content) VALUES($1, $2) RETURNING *", 
-      [thread.title, thread.content]
+      "INSERT INTO threads (user_id, title, body) VALUES($1, $2, $3) RETURNING *", 
+      [thread.user_id, thread.title, thread.body]
     );
     return newThread;
   } catch (error) {
@@ -33,12 +33,13 @@ const createThread = async (thread) => {
   }
 };
 
+
 // UPDATE - Update a thread by ID
-const updateThread = async (id, thread) => {
+const updateThread = async (id, thread, firebase_uid) => {
   try {
     const updatedThread = await db.one(
-      "UPDATE threads SET title=$1, content=$2 WHERE id=$3 RETURNING *",
-      [thread.title, thread.content, id]
+      "UPDATE threads SET comment_id=$1, content=$2 WHERE id=$3 AND firebase_uid=$4 RETURNING *",
+      [thread.comment_id, thread.content, id, firebase_uid]
     );
     return updatedThread;
   } catch (error) {
@@ -47,11 +48,11 @@ const updateThread = async (id, thread) => {
 };
 
 // DELETE - Remove a thread by ID
-const deleteThread = async (id) => {
+const deleteThread = async (id, firebase_uid) => {
   try {
     const deletedThread = await db.one(
-      "DELETE FROM threads WHERE id = $1 RETURNING *", 
-      id
+      "DELETE FROM threads WHERE id = $1 AND firebase_uid = $2 RETURNING *", 
+      [id, firebase_uid]
     );
     return deletedThread;
   } catch (error) {

@@ -1,70 +1,101 @@
-const Comment = require('../models/Comment'); // Assuming you have a model named Comment
+// commentsController.js
 
-// Get all comments
-exports.getAllComments = async (req, res) => {
-    try {
-        const comments = await Comment.find();
-        res.json(comments);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+const db = require("../config/dbConfig");
+
+const getAllComments = async (req, res) => {
+  try {
+    const comments = await db.any("SELECT * FROM comments");
+
+    res.json({ data: comments, status: 200 });
+  } catch (error) {
+    res.status(500).json({ error, status: 500 });
+  }
 };
 
-// Get a single comment by ID
-exports.getCommentById = async (req, res) => {
-    try {
-        const comment = await Comment.findById(req.params.id);
-        if (!comment) {
-            return res.status(404).json({ error: "Comment not found" });
-        }
-        res.json(comment);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+// Function to get all comments for a specific thread
+const getCommentsByThreadId = async (req, res) => {
+  try {
+    const threadId = req.params.id;
+    const comments = await db.any(
+      "SELECT * FROM comments WHERE thread_id=$1",
+      threadId
+    );
+
+    if (!comments.length) {
+      return res
+        .status(404)
+        .json({ error: "No comments found for this thread", status: 404 });
     }
+
+    res.json({ data: comments, status: 200 });
+  } catch (error) {
+    res.status(500).json({ error, status: 500 });
+  }
 };
 
-// Create a new comment
-exports.createComment = async (req, res) => {
-    try {
-        const comment = new Comment(req.body);
-        await comment.save();
-        res.status(201).json(comment);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+// Function to post a new comment for a specific thread
+const addComment = async (req, res) => {
+  try {
+    const threadId = req.params.id;
+    const { text } = req.body;
+    const firebaseUid = req.user.uid; // Getting UID from the Firebase auth token
+
+    const user = await db.one("SELECT id FROM users WHERE firebase_uid=$1", [
+      firebaseUid,
+    ]);
+
+    const newComment = await db.one(
+      "INSERT INTO comments (thread_id, user_id, text) VALUES($1, $2, $3) RETURNING *",
+      [threadId, user.id, text]
+    );
+
+    res.status(201).json({ data: newComment, status: 201 });
+  } catch (error) {
+    res.status(500).json({ error, status: 500 });
+  }
 };
 
-// Update a comment by its ID
-exports.updateComment = async (req, res) => {
-    try {
-        const { id } = req.params;
-        let comment = await Comment.findById(id);
+// Function to update a comment by ID
+const updateComment = async (req, res) => {
+  try {
+    const commentId = req.params.id;
+    const { text } = req.body;
 
-        if (!comment) {
-            return res.status(404).json({ error: "Comment not found" });
-        }
+    const updatedComment = await db.one(
+      "UPDATE comments SET text=$1 WHERE id=$2 RETURNING *",
+      [text, commentId]
+    );
 
-        Object.assign(comment, req.body);
-        await comment.save();
-
-        res.json(comment);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+    res.json({ data: updatedComment, status: 200 });
+  } catch (error) {
+    res.status(500).json({ error, status: 500 });
+  }
 };
 
-// Delete a comment by its ID
-exports.deleteComment = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const comment = await Comment.findByIdAndDelete(id);
+// Function to delete a comment by ID
+const deleteComment = async (req, res) => {
+  try {
+    const commentId = req.params.id;
 
-        if (!comment) {
-            return res.status(404).json({ error: "Comment not found" });
-        }
+    const deletedComment = await db.one(
+      "DELETE FROM comments WHERE id=$1 RETURNING *",
+      commentId
+    );
 
-        res.json({ message: "Comment deleted successfully" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+    res.json({
+      message: "Comment deleted successfully",
+      data: deletedComment,
+      status: 200,
+    });
+  } catch (error) {
+    res.status(500).json({ error, status: 500 });
+  }
+};
+
+module.exports = {
+  getAllComments,
+  getCommentsByThreadId,
+  addComment,
+  updateComment,
+  deleteComment,
 };
