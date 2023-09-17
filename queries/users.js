@@ -43,7 +43,7 @@ const createUser = async (user) => {
     return newUser;
   } catch (error) {
     console.error(error);
-    return { error: 'Could not create user', status: 400 };
+    return { error };
   }
 };
 

@@ -8,7 +8,11 @@ const usersController = require("../controllers/usersController");
 const authMiddleware = require("../middleware/authMiddleware");
 
 // Routes
-router.get("/", authMiddleware, usersController.getAllUsers);
+router.get("/", async (req, res)  => {
+    const users = await usersController.getAllUsers()
+    console.log(users);
+    res.json({success: true, payload: users});
+});
 router.get("/:id", authMiddleware, usersController.getUserById);
 router.get("/firebase/:uid", authMiddleware, usersController.getUserByFirebaseUID);
 
@@ -18,7 +22,10 @@ router.get('/firebase/:uid/threads', authMiddleware, usersController.getUserThre
 router.get('/firebase/:uid/likes', authMiddleware, usersController.getUserLikes);
 
 // Routes without middleware
-router.post("/", usersController.createUser);
+router.post("/", (req, res) => {
+    const newUser = req.body
+    usersController.createUser(newUser)
+});
 router.put("/:id", authMiddleware, usersController.updateUser);
 router.delete("/:id", authMiddleware, usersController.deleteUser);
 

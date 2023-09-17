@@ -41,6 +41,7 @@ const getUserLikes = async (req, res) => {
 const getAllUsers = async () => {
   try {
     const allUsers = await db.any("SELECT * FROM users");
+    console.log(allUsers);
     return { data: allUsers, status: 200 };
   } catch (error) {
     console.error(error);
@@ -70,6 +71,7 @@ const getUserByFirebaseUID = async (req, res) => {
 };
 
 const createUser = async (user) => {
+  console.log("testing route", user)
   try {
     const newUser = await db.one(
       "INSERT INTO users (firebase_uid, username, email, profile_photo, bio) VALUES($1, $2, $3, $4, $5) RETURNING *",
@@ -81,6 +83,7 @@ const createUser = async (user) => {
         user.bio,
       ]
     );
+    console.log("new user", newUser)
     return { data: newUser, status: 200 };
   } catch (error) {
     console.error(error);
