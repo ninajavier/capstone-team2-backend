@@ -127,3 +127,5 @@ app.get("*", (req, res) => {
 app.listen(PORT, () => {
   console.log(`listening on PORT: ${PORT}🥠`);
 });
+
+console.log(process.env.NODE_ENV)
