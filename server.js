@@ -61,7 +61,7 @@ app.get("/subway-alerts", async (req, res) => {
         "x-api-key": apiKey,
       },
       responseType: "arraybuffer",
-    });
+    }); /////
 
     const alertMessage = MTAProtobufRoot.lookupType(
       "transit_realtime.FeedMessage"
