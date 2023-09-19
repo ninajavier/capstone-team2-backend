@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 8888;
 const protobuf = require("protobufjs");
 let MTAProtobufRoot = null;
 
-const apiKey = "OLEPnbM7K87leaINTEi5t1a4l7POZrf9acZ7RVIU";
+const apiKey = process.env.TRAIN_API_KEY;
 
 protobuf.load("Proto/gtfs-realtime.proto", function (err, root) {
   if (err) throw err;
