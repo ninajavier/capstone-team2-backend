@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const admin = require('./config/firebaseAdminConfig');
-const firebaseAuthMiddleware = require('./middleware/firebaseAuthMiddleware');
+
 const errorHandlerMiddleware = require('./middleware/errorHandlerMiddleware');
 const requestLoggerMiddleware = require('./middleware/requestLoggerMiddleware');
 
@@ -20,9 +19,13 @@ app.use(requestLoggerMiddleware); // Logging all incoming requests
 // Use your routes with Firebase Auth Middleware
 app.use("/api", apiRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/comments", firebaseAuthMiddleware, commentRoutes);
-app.use("/api/threads", firebaseAuthMiddleware, threadRoutes);
-app.use("/api/likes", firebaseAuthMiddleware, likeRoutes);
+app.use("/api/comments", commentRoutes);
+app.use("/api/threads", threadRoutes);
+app.use("/api/likes", likeRoutes);
+
+app.get('/', (req, res) => {
+    res.send('Welcome to Prograde');
+});
 
 // Error handler middleware should be the last middleware to be used
 app.use(errorHandlerMiddleware);

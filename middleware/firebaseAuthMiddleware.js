@@ -1,6 +1,6 @@
 const admin = require('firebase-admin');
 
-const firebaseAuthMiddleware = async (req, res, next) => {
+const  = async (req, res, next) => {
   try {
     const idToken = req.headers.authorization?.replace('Bearer ', '');
     if (!idToken) {
@@ -15,4 +15,4 @@ const firebaseAuthMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = firebaseAuthMiddleware;
+module.exports = ;
