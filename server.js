@@ -180,7 +180,7 @@ app.get("/subway-feed-g", async (req, res) => {
 
     // Decode the ProtoBuf data
     const transitFeedMessage = MTAProtobufRoot.lookupType(
-      "transit_realtime.FeedMessage"
+      "transit_realtime.TripUpdate"
     );
     const decodedMessage = transitFeedMessage.decode(
       new Uint8Array(response.data)
