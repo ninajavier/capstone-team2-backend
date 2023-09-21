@@ -142,7 +142,7 @@ app.get("/subway-feed-ace", async (req, res) => {
   try {
     const response = await axios.get(apiUrl, {
       headers: {
-        "x-api-key": apiKey2,
+        "x-api-key": apiKey,
       },
       responseType: "arraybuffer",
     });
@@ -175,14 +175,14 @@ app.get("/subway-feed-g", async (req, res) => {
   try {
     const response = await axios.get(apiUrl, {
       headers: {
-        "x-api-key": apiKey2,
+        "x-api-key": apiKey,
       },
       responseType: "arraybuffer",
     });
 
     // Decode the ProtoBuf data
     const transitFeedMessage = MTAProtobufRoot.lookupType(
-      "transit_realtime.TripUpdate"
+      "transit_realtime.FeedMessage"
     );
     const decodedMessage = transitFeedMessage.decode(
       new Uint8Array(response.data)
@@ -430,4 +430,4 @@ app.listen(PORT, () => {
   console.log(`listening on PORT: ${PORT}🥠`);
 });
 
-console.log(process.env.NODE_ENV)
+console.log(process.env.NODE_ENV);
