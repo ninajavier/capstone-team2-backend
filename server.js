@@ -18,7 +18,7 @@ protobuf.load("Proto/gtfs-realtime.proto", function (err, root) {
 });
 app.use(cors());
 
-app.get("/service-alerts", async (req, res) => {
+app.get("/all-service-alerts", async (req, res) => {
   if (!MTAProtobufRoot) {
     return res
       .status(500)
@@ -28,7 +28,7 @@ app.get("/service-alerts", async (req, res) => {
   // const apiUrl =
   //   "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace";
   const apiUrl =
-    "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fsubway-alerts";
+    "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fall-alerts";
   //test service alters for all train lines
 
   try {
@@ -142,7 +142,7 @@ app.get("/subway-feed-ace", async (req, res) => {
   try {
     const response = await axios.get(apiUrl, {
       headers: {
-        "x-api-key": apiKey2,
+        "x-api-key": apiKey,
       },
       responseType: "arraybuffer",
     });
@@ -175,14 +175,14 @@ app.get("/subway-feed-g", async (req, res) => {
   try {
     const response = await axios.get(apiUrl, {
       headers: {
-        "x-api-key": apiKey2,
+        "x-api-key": apiKey,
       },
       responseType: "arraybuffer",
     });
 
     // Decode the ProtoBuf data
     const transitFeedMessage = MTAProtobufRoot.lookupType(
-      "transit_realtime.TripUpdate"
+      "transit_realtime.FeedMessage"
     );
     const decodedMessage = transitFeedMessage.decode(
       new Uint8Array(response.data)
@@ -364,7 +364,7 @@ app.get("/subway-feed-sir", async (req, res) => {
   }
 
   const apiUrl =
-    "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-sir";
+    "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-si";
 
   try {
     const response = await axios.get(apiUrl, {
@@ -385,7 +385,7 @@ app.get("/subway-feed-sir", async (req, res) => {
     res.json(decodedMessage);
   } catch (error) {
     console.error("Detailed error:", error);
-    res.status(500).send("Error fetching NYCT GTFS ACE data.");
+    res.status(500).send("Error fetching NYCT GTFS sir data.");
   }
 });
 
@@ -397,7 +397,7 @@ app.get("/subway-feed-lirr", async (req, res) => {
   }
 
   const apiUrl =
-    "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-lirr";
+    "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/lirr%2Fgtfs-lirr";
 
   try {
     const response = await axios.get(apiUrl, {
@@ -430,4 +430,4 @@ app.listen(PORT, () => {
   console.log(`listening on PORT: ${PORT}🥠`);
 });
 
-console.log(process.env.NODE_ENV)
+console.log(process.env.NODE_ENV);
