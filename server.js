@@ -9,6 +9,8 @@ let MTAProtobufRoot = null;
 
 const apiKey = process.env.TRAIN_API_KEY;
 
+const apiKey2 = process.env.TRAIN_API_KEY_2;
+
 protobuf.load("Proto/gtfs-realtime.proto", function (err, root) {
   if (err) throw err;
   MTAProtobufRoot = root;
@@ -140,7 +142,7 @@ app.get("/subway-feed-ace", async (req, res) => {
   try {
     const response = await axios.get(apiUrl, {
       headers: {
-        "x-api-key": apiKey,
+        "x-api-key": apiKey2,
       },
       responseType: "arraybuffer",
     });
@@ -173,7 +175,7 @@ app.get("/subway-feed-g", async (req, res) => {
   try {
     const response = await axios.get(apiUrl, {
       headers: {
-        "x-api-key": apiKey,
+        "x-api-key": apiKey2,
       },
       responseType: "arraybuffer",
     });
