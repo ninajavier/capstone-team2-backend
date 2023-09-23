@@ -1,13 +1,22 @@
-DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS threads CASCADE;
-DROP TABLE IF EXISTS service_updates CASCADE;
-DROP TABLE IF EXISTS routes CASCADE;
-DROP TABLE IF EXISTS comments CASCADE;
+-- IF DATABASE EXISTS -- DROP IT
+DROP DATABASE IF EXISTS prograde_dev;
+
+-- Create our database! 🪐
+CREATE DATABASE prograde_dev;
+
+-- Connect to DB
+\c prograde_dev;
+-- Drop tables if they exist
 DROP TABLE IF EXISTS likes CASCADE;
--- Create a table for users
+DROP TABLE IF EXISTS comments CASCADE;
+DROP TABLE IF EXISTS threads CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+-- Add error handling for each DROP TABLE statement if needed
+
+-- Create tables
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    firebase_uid VARCHAR(255) UNIQUE NOT NULL,
     username VARCHAR(50) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     bio TEXT,
@@ -16,7 +25,6 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Creating the threads table
 CREATE TABLE threads (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
@@ -26,7 +34,6 @@ CREATE TABLE threads (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
--- Creating the comments table
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
@@ -36,7 +43,6 @@ CREATE TABLE comments (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Creating the likes table
 CREATE TABLE likes (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
@@ -46,13 +52,14 @@ CREATE TABLE likes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Creating indexes for optimization
-CREATE INDEX idx_users_firebase_uid ON users(firebase_uid);
+-- Add error handling for each CREATE TABLE statement if needed
+
+-- Create indexes for optimization
 CREATE INDEX idx_comments_thread_id ON comments(thread_id);
 CREATE INDEX idx_likes_thread_id ON likes(thread_id);
 CREATE INDEX idx_likes_comment_id ON likes(comment_id);
 
--- Creating function to update the updated_at column
+-- Create function to update the updated_at column
 CREATE OR REPLACE FUNCTION update_updated_at_column() 
 RETURNS TRIGGER AS $$
 BEGIN
@@ -61,7 +68,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Creating triggers to update the updated_at column automatically
+-- Add error handling for the above CREATE FUNCTION statement if needed
+
+-- Create triggers to update the updated_at column automatically
 CREATE TRIGGER update_user_updated_at
 BEFORE UPDATE ON users
 FOR EACH ROW
@@ -76,3 +85,6 @@ CREATE TRIGGER update_comment_updated_at
 BEFORE UPDATE ON comments
 FOR EACH ROW
 EXECUTE PROCEDURE update_updated_at_column();
+
+-- Add error handling for each CREATE TRIGGER statement if needed
+

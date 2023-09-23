@@ -1,4 +1,4 @@
-const db = require("../db/dbConfig.js");
+const db = require("../config/dbConfig.js");
 
 // INDEX - Get all comments
 const getAllComments = async () => {
@@ -32,11 +32,11 @@ const getCommentsByUserId = async (userId) => {
 };
 
 // CREATE - Add a new comment
-const createComment = async (comment) => {
+const createComment = async ( thread_id, content) => {
   try {
     const newComment = await db.one(
-      "INSERT INTO comments (user_id, content, route_id) VALUES($1, $2, $3) RETURNING *", 
-      [comment.user_id, comment.content, comment.route_id]
+      "INSERT INTO comments (user_id, content, thread_id) VALUES($1, $2, $3) RETURNING *", 
+      [content.user_id, content.content, thread_id]
     );
     return newComment;
   } catch (error) {
@@ -48,8 +48,8 @@ const createComment = async (comment) => {
 const updateComment = async (id, comment) => {
   try {
     const updatedComment = await db.one(
-      "UPDATE comments SET user_id=$1, content=$2, route_id=$3 WHERE id=$4 RETURNING *",
-      [comment.user_id, comment.content, comment.route_id, id]
+      "UPDATE comments SET user_id=$1, content=$2, thread_id=$3 WHERE id=$4 RETURNING *",
+      [comment.user_id, comment.content, comment.thread_id, id]
     );
     return updatedComment;
   } catch (error) {

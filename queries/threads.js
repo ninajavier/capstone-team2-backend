@@ -1,4 +1,4 @@
-const db = require("../db/dbConfig.js");
+const db = require("../config/dbConfig.js");
 
 // INDEX - Get all threads
 const getAllThreads = async () => {
@@ -21,7 +21,7 @@ const getThreadById = async (id) => {
 };
 
 // CREATE - Add new thread
-const createThread = async (thread, firebase_uid) => {
+const createThread = async (thread) => {
   try {
     const newThread = await db.one(
       "INSERT INTO threads (user_id, title, body) VALUES($1, $2, $3) RETURNING *", 
@@ -35,11 +35,12 @@ const createThread = async (thread, firebase_uid) => {
 
 
 // UPDATE - Update a thread by ID
-const updateThread = async (id, thread, firebase_uid) => {
+const updateThread = async (id, thread) => {
+  const {title, body} = thread;
   try {
     const updatedThread = await db.one(
-      "UPDATE threads SET comment_id=$1, content=$2 WHERE id=$3 AND firebase_uid=$4 RETURNING *",
-      [thread.comment_id, thread.content, id, firebase_uid]
+      "UPDATE threads SET title=$1, body=$2 WHERE id=$3 RETURNING *",
+      [title, body, id]
     );
     return updatedThread;
   } catch (error) {
@@ -48,11 +49,11 @@ const updateThread = async (id, thread, firebase_uid) => {
 };
 
 // DELETE - Remove a thread by ID
-const deleteThread = async (id, firebase_uid) => {
+const deleteThread = async (id) => {
   try {
     const deletedThread = await db.one(
-      "DELETE FROM threads WHERE id = $1 AND firebase_uid = $2 RETURNING *", 
-      [id, firebase_uid]
+      "DELETE FROM threads WHERE id = $1 RETURNING *", 
+      [id]
     );
     return deletedThread;
   } catch (error) {

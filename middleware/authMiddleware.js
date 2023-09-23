@@ -1,6 +1,13 @@
+require('dotenv').config();
 const admin = require("../config/firebaseAdminConfig");
 
 async function authMiddleware(req, res, next) {
+  if (process.env.BYPASS_AUTH === "true") {
+    console.warn("Authentication bypassed");
+    req.user = { uid: "bypassedUserId" }; // Provide a dummy user ID
+    return next();
+  }
+  
   const idToken = req.headers.authorization;
 
   try {

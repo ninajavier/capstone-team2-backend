@@ -22,28 +22,17 @@ const getUserById = async (id) => {
   }
 };
 
-// SHOW - Get single user by Firebase UID
-const getUserByFirebaseUID = async (uid) => {
-  try {
-    const user = await db.one("SELECT * FROM users WHERE firebase_uid=$1", [uid]);
-    return { data: user, status: 200 };
-  } catch (error) {
-    console.error(error);
-    return { error: 'User not found', status: 404 };
-  }
-};
-
 // CREATE - Add new user
 const createUser = async (user) => {
   try {
     const newUser = await db.one(
-      "INSERT INTO users (firebase_uid, username, email, profile_photo, bio, likes) VALUES($1, $2, $3, $4, $5, $6) RETURNING *", 
-      [user.firebase_uid, user.username, user.email, user.profile_photo, user.bio, user.likes]
+      "INSERT INTO users (username, email, profile_photo, bio, likes) VALUES($1, $2, $3, $4, $5) RETURNING *", 
+      [user.username, user.email, user.profile_photo, user.bio, user.likes]
     );
-    return newUser;
+    return { data: newUser, status: 201 };
   } catch (error) {
     console.error(error);
-    return { error };
+    return { error, status: 400 };
   }
 };
 
@@ -94,7 +83,6 @@ const deleteUser = async (id) => {
 module.exports = {
   getAllUsers,
   getUserById,
-  getUserByFirebaseUID,  
   createUser,
   updateUser,
   deleteUser,

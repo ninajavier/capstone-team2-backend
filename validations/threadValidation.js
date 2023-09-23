@@ -7,11 +7,6 @@ const create = [
     .withMessage('Comment ID is required')
     .isInt()
     .withMessage('Comment ID must be an integer'),
-  check('firebase_uid')
-    .notEmpty()
-    .withMessage('Firebase UID is required')
-    .isString()
-    .withMessage('Firebase UID must be a string'),
   check('content')
     .notEmpty()
     .withMessage('Content is required')

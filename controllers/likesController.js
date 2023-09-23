@@ -40,10 +40,10 @@ const getLikesByThreadId = async (thread_id) => {
 const createLike = async (req, res) => {
   try {
     const { thread_id, comment_id, like_type } = req.body;
-    const firebaseUid = req.user.uid; // Getting UID from the Firebase auth token
+    const userEmail = req.user.email; // Getting email from the auth token
 
-    const user = await db.one("SELECT id FROM users WHERE firebase_uid=$1", [
-      firebaseUid,
+    const user = await db.one("SELECT id FROM users WHERE email=$1", [
+      userEmail,
     ]);
 
     const newLike = await db.one(
