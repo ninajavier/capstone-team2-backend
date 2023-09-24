@@ -5,16 +5,18 @@ require('dotenv').config();
 const DATABASE_URL = process.env.DATABASE_URL;
 
 // Determine the correct connection details based on whether we are in production or development
-const cn = DATABASE_URL ? {
-    connectionString: DATABASE_URL,
-    ssl: { rejectUnauthorized: false },  // Consider this if your cloud provider requires SSL
-    max: 30
-} : {
-    host: process.env.PG_HOST,
-    port: process.env.PG_PORT,
-    database: process.env.PG_DATABASE,
-    user: process.env.PG_USER,
-};
+const cn = process.env.NODE_ENV === 'production'
+    ? {
+        connectionString: DATABASE_URL,
+        ssl: { rejectUnauthorized: false }, // Consider this if your cloud provider requires SSL
+        max: 30
+    }
+    : {
+        host: process.env.PG_HOST,
+        port: process.env.PG_PORT,
+        database: process.env.PG_DATABASE,
+        user: process.env.PG_USER,
+    };
 
 // Connect to the database using pg-promise
 const db = pgp(cn);

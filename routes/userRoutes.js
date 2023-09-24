@@ -4,17 +4,16 @@ console.log("Defining routes"); // Debug log here
 
 const router = express.Router();
 const usersController = require("../controllers/usersController");
-const authMiddleware = require("../middleware/authMiddleware");
 
 // Routes
 router.get("/", usersController.getAllUsers());
 router.get("/:id", (req, res) => usersController.getUserById(req.params.id));
 
 
-// New routes for fetching a user's comments, threads, and likes based on ID
-router.get('/:id/comments', authMiddleware, usersController.getUserComments);
-router.get('/:id/threads', authMiddleware, usersController.getUserThreads);
-router.get('/:id/likes', authMiddleware, usersController.getUserLikes);
+// New routes for fetching a user's comments, threads, and likes based on Firebase UID
+router.get('/firebase/:uid/comments', authMiddleware, usersController.getUserComments);
+router.get('/firebase/:uid/threads', authMiddleware, usersController.getUserThreads);
+router.get('/firebase/:uid/likes', authMiddleware, usersController.getUserLikes);
 
 // Routes without middleware
 router.post("/", (req, res) => {
@@ -25,7 +24,7 @@ router.post("/", (req, res) => {
         res.json({ success: false, error });
     });
 });
-router.put("/:id", authMiddleware, usersController.updateUser);
-router.delete("/:id", authMiddleware, usersController.deleteUser);
+router.put("/:id", usersController.updateUser);
+router.delete("/:id", usersController.deleteUser);
 
 module.exports = router;
