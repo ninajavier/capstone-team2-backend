@@ -2,9 +2,6 @@ const { check } = require('express-validator');
 
 // Validation rules for user registration
 const register = [
-  check('firebase_uid')
-    .notEmpty()
-    .withMessage('Firebase UID is required'),
   check('username')
     .notEmpty()
     .withMessage('Username is required')

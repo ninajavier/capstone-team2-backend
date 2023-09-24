@@ -34,11 +34,11 @@ const getLikesByThreadId = async (thread_id) => {
 };
 
 // CREATE - Add new like
-const createLike = async (like, firebase_uid) => {
+const createLike = async (like) => {
   try {
     const newLike = await db.one(
-      "INSERT INTO likes (firebase_uid, thread_id) VALUES($1, $2) RETURNING *", 
-      [firebase_uid, like.thread_id]
+      "INSERT INTO likes (thread_id) VALUES($1) RETURNING *", 
+      [like.thread_id]
     );
     return { data: newLike, status: 201 };
   } catch (error) {
@@ -48,11 +48,11 @@ const createLike = async (like, firebase_uid) => {
 };
 
 // DELETE - Remove a like by ID
-const deleteLike = async (id, firebase_uid) => {
+const deleteLike = async (id) => {
   try {
     const deletedLike = await db.one(
-      "DELETE FROM likes WHERE id = $1 AND firebase_uid = $2 RETURNING *", 
-      [id, firebase_uid]
+      "DELETE FROM likes WHERE id = $1 RETURNING *", 
+      [id]
     );
     return { data: deletedLike, status: 200 };
   } catch (error) {

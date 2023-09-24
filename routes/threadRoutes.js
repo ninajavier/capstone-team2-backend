@@ -1,6 +1,5 @@
-const express = require("express");
-const router = express.Router();
-const threadsController = require("../controllers/threadsController");
+
+const threadsController = require('../controllers/threadsController');
 
 // Middleware (replace `authMiddleware` and `validationMiddleware` with your actual middleware)
 const validationMiddleware = require("../middleware/validationMiddleware");
