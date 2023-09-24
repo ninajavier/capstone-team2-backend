@@ -7,7 +7,7 @@ const requestLoggerMiddleware = require('./middleware/requestLoggerMiddleware');
 // Import your routers
 // const apiRoutes = require('./routes/apiRouter'); // REDUNDANCY
 // const userRoutes = require('./routes/userRoutes');
-// const commentController= require('./controllers/commentsController');
+const commentController= require('./controllers/commentsController');
 // const threadRoutes = require('./routes/threadRoutes');
 // const likeRoutes = require('./routes/likeRoutes');
 const threadsController = require('./controllers/threadsController');
@@ -19,7 +19,7 @@ app.use(requestLoggerMiddleware); // Logging all incoming requests
 // Use your routes
 // app.use("/api", apiRoutes);
 // app.use("/api/users", userRoutes);
-// app.use("/api/comments", commentController);
+app.use("/api/comments", commentController);
 app.use("/api/threads", threadsController);
 // app.use("/api/likes", likeRoutes);
 
