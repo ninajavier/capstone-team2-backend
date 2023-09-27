@@ -1,18 +1,18 @@
--- IF DATABASE EXISTS -- DROP IT
+-- IF DATABASE EXISTS, DROP IT
 DROP DATABASE IF EXISTS prograde_dev;
 
--- Create our database! 🪐
+-- Create our database
 CREATE DATABASE prograde_dev;
 
 -- Connect to DB
 \c prograde_dev;
+
 -- Drop tables if they exist
 DROP TABLE IF EXISTS likes CASCADE;
 DROP TABLE IF EXISTS comments CASCADE;
 DROP TABLE IF EXISTS threads CASCADE;
+DROP TABLE IF EXISTS posts CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
-
--- Add error handling for each DROP TABLE statement if needed
 
 -- Create tables
 CREATE TABLE users (
@@ -52,7 +52,21 @@ CREATE TABLE likes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Add error handling for each CREATE TABLE statement if needed
+CREATE TABLE posts (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    train_line VARCHAR(2) NOT NULL,
+    station VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    body TEXT,
+    rating INT CHECK (rating >= 1 AND rating <= 5),
+    photo_url VARCHAR(255),
+    is_favorite BOOLEAN DEFAULT false,
+    tags VARCHAR[] DEFAULT '{}'::VARCHAR[], -- Tags stored as an array of strings
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
 
 -- Create indexes for optimization
 CREATE INDEX idx_comments_thread_id ON comments(thread_id);
@@ -67,8 +81,6 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
--- Add error handling for the above CREATE FUNCTION statement if needed
 
 -- Create triggers to update the updated_at column automatically
 CREATE TRIGGER update_user_updated_at
@@ -85,6 +97,3 @@ CREATE TRIGGER update_comment_updated_at
 BEFORE UPDATE ON comments
 FOR EACH ROW
 EXECUTE PROCEDURE update_updated_at_column();
-
--- Add error handling for each CREATE TRIGGER statement if needed
-
