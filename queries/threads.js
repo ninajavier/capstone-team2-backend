@@ -20,6 +20,27 @@ const getThreadById = async (id) => {
   }
 };
 
+// GET - threads by train_id -- filtered index
+const getThreadsByTrainId = async (train_id) => {
+  try { 
+    const threads = await db.any("SELECT * FROM threads WHERE train_line=$1", train_id);
+    return threads;
+  } catch (error) {
+    return error;
+  }
+};
+
+//GET - threads by trains -- filtered index
+const getThreadsByTrains = async (trains) => {
+  try { 
+    const threads = await db.any("SELECT * FROM threads WHERE train_line IN ($1, $2)", trains);
+    return threads;
+  } catch (error) {
+    return error;
+  }
+};
+
+
 // CREATE - Add new thread
 const createThread = async (thread) => {
   try {
@@ -64,6 +85,8 @@ const deleteThread = async (id) => {
 module.exports = {
   getAllThreads,
   getThreadById,
+  getThreadsByTrainId,
+  getThreadsByTrains,
   createThread,
   updateThread,
   deleteThread,

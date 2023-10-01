@@ -5,13 +5,10 @@ const errorHandlerMiddleware = require('./middleware/errorHandlerMiddleware');
 const requestLoggerMiddleware = require('./middleware/requestLoggerMiddleware');
 // const cors = require('cors');
 
-// Import your routers
-// const apiRoutes = require('./routes/apiRouter'); // REDUNDANCY
-// const userRoutes = require('./routes/userRoutes');
+
 const commentController= require('./controllers/commentsController');
-// const threadRoutes = require('./routes/threadRoutes');
-// const likeRoutes = require('./routes/likeRoutes');
 const threadsController = require('./controllers/threadsController');
+
 const app = express();
 // app.use(cors())
 app.use(express.json()); // This middleware is used to parse JSON bodies

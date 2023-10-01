@@ -11,7 +11,6 @@ CREATE DATABASE prograde_dev;
 DROP TABLE IF EXISTS likes CASCADE;
 DROP TABLE IF EXISTS comments CASCADE;
 DROP TABLE IF EXISTS threads CASCADE;
-DROP TABLE IF EXISTS posts CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 
 -- Create tables
@@ -28,8 +27,14 @@ CREATE TABLE users (
 CREATE TABLE threads (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
+    train_line VARCHAR(2),
+    station VARCHAR(255),
     title VARCHAR(255) NOT NULL,
     body TEXT,
+    rating INT CHECK (rating >= 1 AND rating <= 5),
+    photo_url VARCHAR(255),
+    is_favorite BOOLEAN DEFAULT false,
+    tags VARCHAR[] DEFAULT '{}'::VARCHAR[], -- Tags stored as an array of strings
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -50,21 +55,6 @@ CREATE TABLE likes (
     thread_id INT REFERENCES threads(id),
     like_type VARCHAR(50) NOT NULL, -- Values: 'upvote', 'downvote'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE posts (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id),
-    train_line VARCHAR(2) NOT NULL,
-    station VARCHAR(255) NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    body TEXT,
-    rating INT CHECK (rating >= 1 AND rating <= 5),
-    photo_url VARCHAR(255),
-    is_favorite BOOLEAN DEFAULT false,
-    tags VARCHAR[] DEFAULT '{}'::VARCHAR[], -- Tags stored as an array of strings
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
