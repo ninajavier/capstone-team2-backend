@@ -3,7 +3,7 @@ const cors = require("cors")
 const express = require("express");
 const errorHandlerMiddleware = require('./middleware/errorHandlerMiddleware');
 const requestLoggerMiddleware = require('./middleware/requestLoggerMiddleware');
-const cors = require('cors');
+// const cors = require('cors');
 
 // Import your routers
 // const apiRoutes = require('./routes/apiRouter'); // REDUNDANCY
@@ -13,7 +13,7 @@ const commentController= require('./controllers/commentsController');
 // const likeRoutes = require('./routes/likeRoutes');
 const threadsController = require('./controllers/threadsController');
 const app = express();
-app.use(cors())
+// app.use(cors())
 app.use(express.json()); // This middleware is used to parse JSON bodies
 app.use(cors());
 app.use(requestLoggerMiddleware); // Logging all incoming requests
