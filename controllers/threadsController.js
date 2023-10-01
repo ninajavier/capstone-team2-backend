@@ -4,6 +4,8 @@ const db = require("../config/dbConfig");
 const {
   getAllThreads,
   getThreadById,
+  getThreadsByTrainId,
+  getThreadsByTrains,
   createThread,
   updateThread,
   deleteThread,
@@ -23,6 +25,40 @@ threads.get("/", async (_, res) => {
   }
 });
 
+// // Get threads by multiple train_id 's
+// threads.get("/by-train", async (req, res) => {
+//   const trains = req.body;
+//   console.log(trains, 'testing the by-train route')
+//   try {
+//     const threadsByTrains = await getThreadsByTrains(trains);
+//     res.json({ data: threadsByTrains, status: 200 });
+//   } catch (error) {
+//     res.status(500).json({ error, status: 500 });
+//   }
+// })
+
+threads.get("/by-train", async (req, res) => {
+  const trains = req.query.trains.split(''); // Use req.query to get multiple train_ids
+  try {
+    const threadsByTrains = await getThreadsByTrains(trains);
+    res.json({ data: threadsByTrains, status: 200 });
+  } catch (error) {
+    res.status(500).json({ error, status: 500 });
+  }
+});
+
+// Get a thread by train_id
+threads.get("/by-train/:trainId", async (req, res) => {
+  const trainId = req.params.trainId;
+  console.log(trainId);
+  try {
+    const threadByTrainId = await getThreadsByTrainId(trainId);
+    res.json({ data: threadByTrainId, status: 200 });
+  } catch (error) {
+    res.status(500).json({ error, status: 500 });
+  }
+});
+
 // Get a thread by ID
 threads.get("/:id", async (req, res) => {
   const threadId = req.params.id;
@@ -34,6 +70,7 @@ threads.get("/:id", async (req, res) => {
     res.status(500).json({ error, status: 500 });
   }
 });
+
 
 // Create a new thread
 threads.post("/", async (req, res) => {

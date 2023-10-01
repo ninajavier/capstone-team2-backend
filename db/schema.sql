@@ -27,8 +27,8 @@ CREATE TABLE users (
 CREATE TABLE threads (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
-    train_line VARCHAR(2) NOT NULL,
-    station VARCHAR(255) NOT NULL,
+    train_line VARCHAR(2),
+    station VARCHAR(255),
     title VARCHAR(255) NOT NULL,
     body TEXT,
     rating INT CHECK (rating >= 1 AND rating <= 5),
