@@ -14,6 +14,27 @@ DROP TABLE IF EXISTS threads CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS stations CASCADE;
 -- Create tables
+CREATE TABLE stations (
+    station_id integer,
+    complex_id integer,
+    gtfs_stop_id text,
+    division text,
+    line text,
+    stop_name text,
+    borough text,
+    daytime_routes text,
+    structure text,
+    gtfs_latitude double precision,
+    gtfs_longitude double precision,
+    north_direction_label text,
+    south_direction_label text,
+    ada integer,
+    ada_direction_notes text,
+    ada_nb integer,
+    ada_sb integer
+);
+
+
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
@@ -87,3 +108,5 @@ CREATE TRIGGER update_comment_updated_at
 BEFORE UPDATE ON comments
 FOR EACH ROW
 EXECUTE PROCEDURE update_updated_at_column();
+
+
