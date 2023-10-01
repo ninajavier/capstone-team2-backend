@@ -55,29 +55,29 @@ VALUES
 
 -- Threads
 -- Commuter Discussion
-INSERT INTO threads (user_id, title, body, created_at, updated_at)
+INSERT INTO threads (user_id, train_line, station, title, body, rating, photo_url, is_favorite, tags, created_at, updated_at)
 VALUES
-  ((SELECT id FROM users WHERE username = 'Sarah'), 'B Train Commuters Unite!', 'Lets share our daily experiences and tips for a smoother B train commute.', NOW(), NOW());
+  ((SELECT id FROM users WHERE username = 'Sarah'), 'B', 'Union Square', 'B Train Commuters Unite!', 'Lets share our daily experiences and tips for a smoother B train commute.', 4, 'path/to/photo.jpg', false, '{"#Btrain", "#commute", "#tips"}', NOW(), NOW());
 
 -- Tourist Inquiry
-INSERT INTO threads (user_id, title, body, created_at, updated_at)
+INSERT INTO threads (user_id, train_line, station, title, body, rating, photo_url, is_favorite, tags, created_at, updated_at)
 VALUES
-  ((SELECT id FROM users WHERE username = 'David'), 'Subway Art Enthusiasts - Share Your Finds!', 'Travelers, lets exchange notes on the best subway art installations in NYC.', NOW(), NOW());
+  ((SELECT id FROM users WHERE username = 'David'), 'A', 'Times Square', 'Subway Art Enthusiasts - Share Your Finds!', 'Travelers, lets exchange notes on the best subway art installations in NYC.', 5, 'path/to/photo.jpg', true, '{"#Atrain", "#subway", "#NYC"}', NOW(), NOW());
 
 -- Commuter Advocacy
-INSERT INTO threads (user_id, title, body, created_at, updated_at)
+INSERT INTO threads (user_id, train_line, station, title, body, rating, photo_url, is_favorite, tags, created_at, updated_at)
 VALUES
-  ((SELECT id FROM users WHERE username = 'Emily'), 'Public Transportation Policy Discussion', 'Join the conversation on improving our citys transit system. Your voice matters!', NOW(), NOW());
+  ((SELECT id FROM users WHERE username = 'Emily'), 'F', 'Grand Central', 'Public Transportation Policy Discussion', 'Join the conversation on improving our citys transit system. Your voice matters!', 4, 'path/to/photo.jpg', false, '{"#Ftrain", "#commuter", "#policy"}', NOW(), NOW());
 
 -- Tourist Exploration
-INSERT INTO threads (user_id, title, body, created_at, updated_at)
+INSERT INTO threads (user_id, train_line, station, title, body, rating, photo_url, is_favorite, tags, created_at, updated_at)
 VALUES
-  ((SELECT id FROM users WHERE username = 'Michael'), 'Subway Adventures - My NYC Journey', 'Documenting my subway adventures as a tourist. Follow along!', NOW(), NOW());
+  ((SELECT id FROM users WHERE username = 'Michael'), 'C', 'Brooklyn Bridge', 'Subway Adventures - My NYC Journey', 'Documenting my subway adventures as a tourist. Follow along!', 5, 'path/to/photo.jpg', true, '{"#Ctrain", "#Brooklyn", "#adventure"}', NOW(), NOW());
 
 -- General Discussion
-INSERT INTO threads (user_id, title, body, created_at, updated_at)
+INSERT INTO threads (user_id, train_line, station, title, body, rating, photo_url, is_favorite, tags, created_at, updated_at)
 VALUES
-  ((SELECT id FROM users WHERE username = 'John'), 'Best Eats Near Subway Stations', 'Share your favorite local eateries near NYC subway stations. Foodies unite!', NOW(), NOW());
+  ((SELECT id FROM users WHERE username = 'John'), 'D', 'Central Park', 'Best Eats Near Subway Stations', 'Share your favorite local eateries near NYC subway stations. Foodies unite!', 5, 'path/to/photo.jpg', true, '{"#Dtrain", "#CentralPark", "#food"}', NOW(), NOW());
 
 -- Likes
 -- Sarah's Upvote
@@ -105,28 +105,3 @@ INSERT INTO likes (user_id, comment_id, thread_id, like_type, created_at)
 VALUES
   ((SELECT id FROM users WHERE username = 'John'), (SELECT id FROM comments WHERE content LIKE 'I tried the local street food'), NULL, 'upvote', NOW());
 
--- Posts
--- Tourist Exploration
-INSERT INTO posts (user_id, train_line, station, title, body, rating, photo_url, is_favorite, tags, created_at, updated_at)
-VALUES
-  ((SELECT id FROM users WHERE username = 'David'), 'A', 'Times Square', 'Times Square Adventures', 'Exploring Times Square via the A train. Bright lights, big city!', 5, 'path/to/photo.jpg', true, '{"#Atrain", "#subway", "#NYC"}', NOW(), NOW());
-
--- Commuter Perspective
-INSERT INTO posts (user_id, train_line, station, title, body, rating, photo_url, is_favorite, tags, created_at, updated_at)
-VALUES
-  ((SELECT id FROM users WHERE username = 'Sarah'), 'B', 'Union Square', 'Daily Commute Insights', 'Navigating Union Square station on the B train route. Tips for a smoother commute.', 4, 'path/to/photo.jpg', false, '{"#Btrain", "#commute", "#tips"}', NOW(), NOW());
-
--- Tourist Perspective
-INSERT INTO posts (user_id, train_line, station, title, body, rating, photo_url, is_favorite, tags, created_at, updated_at)
-VALUES
-  ((SELECT id FROM users WHERE username = 'Michael'), 'C', 'Brooklyn Bridge', 'Brooklyn Bridge Experience', 'Crossing the iconic Brooklyn Bridge via the C train. Spectacular views of the city!', 5, 'path/to/photo.jpg', true, '{"#Ctrain", "#Brooklyn", "#scenic"}', NOW(), NOW());
-
--- Commuter Tip
-INSERT INTO posts (user_id, train_line, station, title, body, rating, photo_url, is_favorite, tags, created_at, updated_at)
-VALUES
-  ((SELECT id FROM users WHERE username = 'Emily'), 'F', 'Grand Central', 'Rush Hour Hacks', 'Navigating Grand Central station during rush hour. Strategies for a stress-free commute.', 4, 'path/to/photo.jpg', false, '{"#Ftrain", "#commuter", "#hacks"}', NOW(), NOW());
-
--- General Observation
-INSERT INTO posts (user_id, train_line, station, title, body, rating, photo_url, is_favorite, tags, created_at, updated_at)
-VALUES
-  ((SELECT id FROM users WHERE username = 'John'), 'D', 'Central Park', 'Central Park Delights', 'Exploring Central Park via the D train. Hidden gems and peaceful spots await!', 5, 'path/to/photo.jpg', true, '{"#Dtrain", "#CentralPark", "#exploration"}', NOW(), NOW());
