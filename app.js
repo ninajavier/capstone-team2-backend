@@ -1,15 +1,14 @@
 require("dotenv").config();
-const cors = require("cors")
+const cors = require("cors");
 const express = require("express");
-const errorHandlerMiddleware = require('./middleware/errorHandlerMiddleware');
-const requestLoggerMiddleware = require('./middleware/requestLoggerMiddleware');
+const errorHandlerMiddleware = require("./middleware/errorHandlerMiddleware");
+const requestLoggerMiddleware = require("./middleware/requestLoggerMiddleware");
 
-
-const commentController= require('./controllers/commentsController');
-const threadsController = require('./controllers/threadsController');
+const commentController = require("./controllers/commentsController");
+const threadsController = require("./controllers/threadsController");
 
 const app = express();
-app.use(cors())
+app.use(cors());
 app.use(express.json()); // This middleware is used to parse JSON bodies
 app.use(requestLoggerMiddleware); // Logging all incoming requests
 
@@ -18,6 +17,7 @@ app.use(requestLoggerMiddleware); // Logging all incoming requests
 // app.use("/api/users", userRoutes);
 app.use("/api/comments", commentController);
 app.use("/api/threads", threadsController);
+
 // app.use("/api/likes", likeRoutes);
 
 // Error handler middleware should be the last middleware to be used
