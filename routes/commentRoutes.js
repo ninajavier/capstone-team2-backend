@@ -2,25 +2,23 @@ const express = require("express");
 const router = express.Router();
 const commentsController = require("../controllers/commentsController");
 
-// Middleware (replace `authMiddleware` and `validationMiddleware` with your actual middleware)
+// Middleware (replace `validationMiddleware` with your actual middleware)
 const validationMiddleware = require("../middleware/validationMiddleware");
 
-// Routes
-router.get("/", commentsController.getAllComments); // Use the new function here to get all comments
-router.get("/:id", commentsController.getCommentsByThreadId); // Get comments by thread ID
+// Routes for comments related to a specific thread
+router.get("/:threadId/comments", commentsController.getAllComments); // Get all comments for a specific thread
+router.get("/:threadId/comments/:commentId", commentsController.getCommentById); // Get a comment by ID
 
 router.post(
-  "/",
-
+  "/:threadId/comments",
   validationMiddleware,
-  commentsController.addComment
-);
+  commentsController.createComment
+); // Create a new comment for a specific thread
 router.put(
-  "/:id",
-
+  "/:threadId/comments/:commentId",
   validationMiddleware,
   commentsController.updateComment
-);
-router.delete("/:id", commentsController.deleteComment);
+); // Update a comment by ID
+router.delete("/:threadId/comments/:commentId", commentsController.deleteComment); // Delete a comment by ID
 
 module.exports = router;

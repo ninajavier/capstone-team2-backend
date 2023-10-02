@@ -43,10 +43,21 @@ const getThreadsByTrains = async (trains) => {
 
 // CREATE - Add new thread
 const createThread = async (thread) => {
+  console.log(thread);
   try {
     const newThread = await db.one(
-      "INSERT INTO threads (user_id, title, body) VALUES($1, $2, $3) RETURNING *", 
-      [thread.user_id, thread.title, thread.body]
+      "INSERT INTO threads (user_id, train_line, station, title, body, rating, photo_url, is_favorite, tags) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
+      [
+        thread.user_id,
+        thread.train_line,
+        thread.station,
+        thread.title,
+        thread.body,
+        thread.rating,
+        thread.photo_url,
+        thread.is_favorite,
+        thread.tags,
+      ]
     );
     return newThread;
   } catch (error) {
