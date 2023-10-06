@@ -26,31 +26,6 @@ INSERT INTO users (username, email, bio, profile_photo, created_at, updated_at)
 VALUES
   ('Michael', 'michael@example.com', 'Traveling to NYC from Tokyo. Loves experiencing the hustle and bustle of the subway.', 'path/to/profile/photo.jpg', NOW(), NOW());
 
--- Comments
--- Comprehensive Comment
-INSERT INTO comments (user_id, content, created_at, updated_at)
-VALUES 
-  ((SELECT id FROM users WHERE username = 'Sarah'), 'Ive been commuting on the B train for years, and I can say that its a reliable option for daily travel.', NOW(), NOW());
-
--- Tourist Insight
-INSERT INTO comments (user_id, content, created_at, updated_at)
-VALUES 
-  ((SELECT id FROM users WHERE username = 'David'), 'As a tourist, I found the subway stations unique architecture fascinating. Great for photo ops!', NOW(), NOW());
-
--- Commuter Tip
-INSERT INTO comments (user_id, content, created_at, updated_at)
-VALUES 
-  ((SELECT id FROM users WHERE username = 'Emily'), 'Commuters, if youre in a rush, the express trains are a game-changer during peak hours.', NOW(), NOW());
-
--- Tourist Experience
-INSERT INTO comments (user_id, content, created_at, updated_at)
-VALUES 
-  ((SELECT id FROM users WHERE username = 'Michael'), 'The NYC subway is like no other! A mix of cultures and stories in every ride.', NOW(), NOW());
-
--- General Observation
-INSERT INTO comments (user_id, content, created_at, updated_at)
-VALUES 
-  ((SELECT id FROM users WHERE username = 'John'), 'I tried the local street food near the subway station, and it was delicious! Must-try for tourists.', NOW(), NOW());
 
 -- Threads
 -- Commuter Discussion
@@ -77,6 +52,33 @@ VALUES
 INSERT INTO threads (user_id, train_line, station, title, body, rating, photo_url, is_favorite, tags, created_at, updated_at)
 VALUES
   ((SELECT id FROM users WHERE username = 'John'), 'D', 'Central Park', 'Best Eats Near Subway Stations', 'Share your favorite local eateries near NYC subway stations. Foodies unite!', 5, 'path/to/photo.jpg', true, '{"#Dtrain", "#CentralPark", "#food"}', NOW(), NOW());
+
+
+-- Comments
+-- Comprehensive Comment
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'Sarah'), 1, 'Ive been commuting on the B train for years, and I can say that its a reliable option for daily travel.', NOW(), NOW());
+
+-- Tourist Insight
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'David'), 2, 'As a tourist, I found the subway stations unique architecture fascinating. Great for photo ops!', NOW(), NOW());
+
+-- Commuter Tip
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'Emily'), 3, 'Commuters, if youre in a rush, the express trains are a game-changer during peak hours.', NOW(), NOW());
+
+-- Tourist Experience
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'Michael'), 4, 'The NYC subway is like no other! A mix of cultures and stories in every ride.', NOW(), NOW());
+
+-- General Observation
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'John'), 5, 'I tried the local street food near the subway station, and it was delicious! Must-try for tourists.', NOW(), NOW());
 
 -- Likes
 -- Sarah's Upvote
