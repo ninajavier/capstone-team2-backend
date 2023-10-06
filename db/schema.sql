@@ -1,11 +1,4 @@
--- IF DATABASE EXISTS, DROP IT
-DROP DATABASE IF EXISTS prograde_dev;
 
--- Create our database
-CREATE DATABASE prograde_dev;
-
--- Connect to DB
-\c prograde_dev;
 
 -- Drop tables if they exist
 DROP TABLE IF EXISTS likes CASCADE;

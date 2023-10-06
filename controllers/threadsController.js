@@ -38,7 +38,7 @@ threads.get("/", async (_, res) => {
 // })
 
 threads.get("/by-train", async (req, res) => {
-  const trains = req.query.trains.split(''); // Use req.query to get multiple train_ids
+  const trains = req.query.trains.split('');
   try {
     const threadsByTrains = await getThreadsByTrains(trains);
     res.json({ data: threadsByTrains, status: 200 });

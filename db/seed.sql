@@ -1,5 +1,4 @@
--- Connect to DB
-\c prograde_dev;
+
 
 -- User Perspectives
 -- Tourist Perspective
