@@ -1,5 +1,4 @@
 
-
 -- Drop tables if they exist
 DROP TABLE IF EXISTS likes CASCADE;
 DROP TABLE IF EXISTS comments CASCADE;

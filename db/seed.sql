@@ -1,5 +1,4 @@
 
-
 -- User Perspectives
 -- Tourist Perspective
 INSERT INTO users (username, email, bio, profile_photo, created_at, updated_at) 

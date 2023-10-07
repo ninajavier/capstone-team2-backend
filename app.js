@@ -3,14 +3,12 @@ const cors = require("cors")
 const express = require("express");
 const errorHandlerMiddleware = require('./middleware/errorHandlerMiddleware');
 const requestLoggerMiddleware = require('./middleware/requestLoggerMiddleware');
-// const cors = require('cors');
 
 
 const commentController= require('./controllers/commentsController');
 const threadsController = require('./controllers/threadsController');
 
 const app = express();
-// app.use(cors())
 app.use(express.json()); // This middleware is used to parse JSON bodies
 app.use(cors());
 app.use(requestLoggerMiddleware); // Logging all incoming requests
