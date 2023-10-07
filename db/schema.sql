@@ -1,20 +1,12 @@
--- IF DATABASE EXISTS, DROP IT
-DROP DATABASE IF EXISTS prograde_dev;
-
--- Create our database
-CREATE DATABASE prograde_dev;
-
--- Connect to DB
-\c prograde_dev;
 
 -- Drop tables if they exist
-DROP TABLE IF EXISTS likes CASCADE;
-DROP TABLE IF EXISTS comments CASCADE;
-DROP TABLE IF EXISTS threads CASCADE;
-DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS likes;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS threads;
+DROP TABLE IF EXISTS users;
 
 -- Create tables
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -24,7 +16,7 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE threads (
+CREATE TABLE IF NOT EXISTS threads (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
     train_line VARCHAR(2),
@@ -39,7 +31,7 @@ CREATE TABLE threads (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE TABLE comments (
+CREATE TABLE IF NOT EXISTS comments (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
     thread_id INT REFERENCES threads(id),
@@ -48,7 +40,7 @@ CREATE TABLE comments (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE likes (
+CREATE TABLE IF NOT EXISTS likes (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
     comment_id INT REFERENCES comments(id),

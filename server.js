@@ -9,8 +9,6 @@ let MTAProtobufRoot = null;
 
 const apiKey = process.env.TRAIN_API_KEY;
 
-const apiKey2 = process.env.TRAIN_API_KEY_2;
-
 protobuf.load("Proto/gtfs-realtime.proto", function (err, root) {
   if (err) throw err;
   MTAProtobufRoot = root;

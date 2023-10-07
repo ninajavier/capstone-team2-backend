@@ -9,8 +9,8 @@ const commentController= require('./controllers/commentsController');
 const threadsController = require('./controllers/threadsController');
 
 const app = express();
-app.use(cors())
 app.use(express.json()); // This middleware is used to parse JSON bodies
+app.use(cors());
 app.use(requestLoggerMiddleware); // Logging all incoming requests
 
 // Use your routes
