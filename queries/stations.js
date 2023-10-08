@@ -3,13 +3,13 @@ const db = require("../config/dbConfig");
 const getAllStationsAndLines = async (req, res) => {
   try {
     const stations = await db.any(
-      'SELECT "station_id", "daytime_routes" FROM stations'
+      'SELECT "station_id", "stop_name", "daytime_routes" FROM stations'
     );
     return {
       stations,
     };
   } catch (error) {
-    return error;
+    console.error((error, "error fetching stations"));
   }
 };
 

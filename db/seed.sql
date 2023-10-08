@@ -105,3 +105,5 @@ INSERT INTO likes (user_id, comment_id, thread_id, like_type, created_at)
 VALUES
   ((SELECT id FROM users WHERE username = 'John'), (SELECT id FROM comments WHERE content LIKE 'I tried the local street food'), NULL, 'upvote', NOW());
 
+-- seeded staions + linesdata 
+

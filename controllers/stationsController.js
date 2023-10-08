@@ -1,15 +1,16 @@
-const db = require("../config/dbConfig");
+const express = require("express");
+const stations = express.Router();
+// const db = require("../config/dbConfig");
 
-app.get("/api/stations", async (req, res) => {
+const { getAllStationsAndLines } = require("../queries/stations");
+
+stations.get("/", async (req, res) => {
   try {
-    const stations = await db.any(
-      'SELECT "station_id", "daytime_routes" FROM stations'
-    );
-    res.json(stations);
+    const allStations = await getAllStationsAndLines();
+    res.status(200).json(allStations);
   } catch (error) {
-    console.error("Error fetching stations:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching stations." });
+    res.status(500).json({ error, status: 500 });
   }
 });
+
+module.exports = stations;
