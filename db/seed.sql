@@ -180,6 +180,58 @@ INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
 VALUES 
   ((SELECT id FROM users WHERE username = 'John'), 5, 'The new signal system is a significant improvement. Its great to see modernization efforts in the NYC subway!', NOW(), NOW());
 
+  -- Response to Cleaner Stations
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'Hannah'), 6, 'Its good to see the cleaning efforts. A clean subway is a happy subway!', NOW(), NOW());
+
+-- Response to Overcrowding During Rush Hour
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'Alex'), 7, 'The overcrowding issue is a real challenge. More trains could indeed be a solution.', NOW(), NOW());
+
+-- Response to Improved Accessibility
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'Oliver'), 8, 'Accessibility improvements are a step in the right direction. Keep up the good work!', NOW(), NOW());
+
+-- Response to Frequent Delays
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'Sophia'), 9, 'The delays are frustrating. Hope the MTA is working on reducing them.', NOW(), NOW());
+
+-- Response to Fare Evasion Issue
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'Ella'), 10, 'Fare evasion affects everyone. Increased security measures could be beneficial.', NOW(), NOW());
+
+-- Response to Better Air Conditioning
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'Noah'), 11, 'Improved air conditioning is a relief during hot summers. Good job on this!', NOW(), NOW());
+
+-- Response to Noise Pollution
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'Liam'), 12, 'Noise pollution is a concern. Hope there are plans to address it.', NOW(), NOW());
+
+-- Response to Improved Safety Measures
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'Emma'), 13, 'Safety improvements are always welcome. It feels good to see the security personnel around.', NOW(), NOW());
+
+-- Response to Escalator Malfunctions
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'Ava'), 14, 'Regular maintenance of escalators is crucial for commuter convenience.', NOW(), NOW());
+
+-- Response to Outreach Programs for Homeless
+INSERT INTO comments (user_id, thread_id, content, created_at, updated_at)
+VALUES 
+  ((SELECT id FROM users WHERE username = 'Isabella'), 15, 'Outreach programs are essential. Its heartwarming to see assistance being offered to those in need.', NOW(), NOW());
+
+
+
 -- Likes
 -- Sarah's Upvote
 INSERT INTO likes (user_id, comment_id, thread_id, like_type, created_at)
